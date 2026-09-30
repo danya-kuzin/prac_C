@@ -3,3 +3,12 @@ build/
 *.out
 *.exe
 *.log
+
+class_*
+!class_*.c
+
+home_*
+!home_*.c
+
+example_*
+!example_*.c
