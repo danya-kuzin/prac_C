@@ -4,7 +4,7 @@
 
 int main(void) {
     // открываем файл и проверяем что он открылся
-    FILE *f = fopen("./filename.bin", "r");
+    FILE *f = fopen("./filename", "r");
     if (f==NULL) {}
 
     int a, max;
