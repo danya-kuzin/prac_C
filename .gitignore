@@ -12,3 +12,6 @@ home_*
 
 example_*
 !example_*.c
+
+*
+!*.*
