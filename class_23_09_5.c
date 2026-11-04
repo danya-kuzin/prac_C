@@ -1,5 +1,11 @@
 #include <stdio.h>
 
+#define OPCODE_BITS_SIZE 7
+#define RD_BITS_SIZE 5
+#define FUNCT3_BITS_SIZE 3
+#define RS1_BITS_SIZE 5
+#define RS2_BITS_SIZE 5
+
 int main(void)
 {
     unsigned int command;
@@ -25,9 +31,9 @@ int main(void)
     mask_funct7 = 0xFE000000;
     mask_rs2    = 0x01F00000;
 
-    rs1    = (command & mask_rs1) >> 15;
-    funct3 = (command & mask_funct3) >> 12;
-    rd     = (command & mask_rd) >> 7;
+    rs1    = (command & mask_rs1) >> (OPCODE_BITS_SIZE + RD_BITS_SIZE + FUNCT3_BITS_SIZE);
+    funct3 = (command & mask_funct3) >> (OPCODE_BITS_SIZE + RD_BITS_SIZE);
+    rd     = (command & mask_rd) >> (OPCODE_BITS_SIZE);
     opcode = command & mask_opcode;
 
     opcode_r_type = 0x33;
@@ -48,8 +54,8 @@ int main(void)
     div_funct7 = 0x01;
 
     if (opcode == opcode_r_type) {
-        funct7 = (command & mask_funct7) >> 25;
-        rs2 = (command & mask_rs2) >> 20;
+        funct7 = (command & mask_funct7) >> (OPCODE_BITS_SIZE + RD_BITS_SIZE + FUNCT3_BITS_SIZE + RS1_BITS_SIZE + RS2_BITS_SIZE);
+        rs2 = (command & mask_rs2) >> (OPCODE_BITS_SIZE + RD_BITS_SIZE + FUNCT3_BITS_SIZE + RS1_BITS_SIZE);
 
         if (funct3 + funct7 == add_funct3 + add_funct7)
             printf("add ");
@@ -64,7 +70,7 @@ int main(void)
     if (opcode == opcode_i_type) {
         /*маска не нужна, т.к. слева от числа ничего не стоит
          и выполнится автоматическое знаковое расширение*/
-        imm = ((signed int)command) >> 20;
+        imm = ((signed int)command) >> (OPCODE_BITS_SIZE + RD_BITS_SIZE + FUNCT3_BITS_SIZE + RS1_BITS_SIZE);
 
         if (funct3 == addi_funct3)
             printf("addi ");
