@@ -9,8 +9,17 @@ int main() {
     unsigned long long * X = NULL;
     unsigned long long * Y = NULL;
     X = (unsigned long long *)malloc(N * sizeof(unsigned long long));
-    Y = (unsigned long long *)malloc(M * sizeof(unsigned long long));
+    if (!X) {
+        fprintf(stderr, "Cant allocate memory\n");
+        return 1;
+    }
     
+    Y = (unsigned long long *)malloc(M * sizeof(unsigned long long));
+    if (!Y) {
+        fprintf(stderr, "Cant allocate memory\n");
+        return 1;
+    }
+
     for (int i = 0; i < N; i++) {
         scanf("%llo", &X[i]);
     }

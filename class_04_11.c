@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv) {
 
-    if (argc < 3) {
+    if (argc != 3) {
         fprintf(stderr, "Error");
         return 1;
     }
@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     struct stat st;
     if (stat(argv[1], &st) == -1) {close(fd_orig); return 3;} 
 
-    int fd_copy = open(argv[2], O_WRONLY | O_CREAT, st.st_mode);
+    int fd_copy = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, st.st_mode);
     if (fd_copy == -1) {
         close(fd_orig);
         fprintf(stderr, "Error");
@@ -31,24 +31,21 @@ int main(int argc, char** argv) {
 
     char buf_read[N];
     char buf_write[N];
-    size_t size;
-    int write_buf_i;
+    ssize_t size;
+    int write_buf_i = 0;
     int k_symb_in_str = 0;
     while (1) {
         size = read(fd_orig, buf_read, N);
         if (size <= 0) break;
 
-        write_buf_i = 0;
-        for (size_t i = 0; i < size; i++) {
-
-            //printf("%d\n", k_symb_in_str);
+        for (ssize_t i = 0; i < size; i++) {
+            k_symb_in_str++;
 
             // пропускаем символы до \n
-            if (k_symb_in_str >= MAX_LEN && buf_read[i] != '\n') {
+            if (k_symb_in_str > MAX_LEN && buf_read[i] != '\n') {
                 continue;
             }
 
-            k_symb_in_str++;
             buf_write[write_buf_i] = buf_read[i];
             write_buf_i++;
 
@@ -56,8 +53,15 @@ int main(int argc, char** argv) {
                 k_symb_in_str = 0;
             }
 
+            if (write_buf_i == N) {
+                write(fd_copy, buf_write, N);
+                write_buf_i = 0;
+            }
         }
+    }
 
+    // все что осталось
+    if (write_buf_i > 0) {
         write(fd_copy, buf_write, write_buf_i);
     }
 
