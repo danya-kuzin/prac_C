@@ -15,8 +15,9 @@ int main(int argc, char **argv) {
     f_read = fopen(argv[1], "r");
     f_write = fopen(argv[2], "w");
 
-    // проверкка на не сущ файЛ
-    if (f_read == NULL) {
+    if (f_read == NULL && f_write != NULL) {fclose(f_write);}
+    if (f_read != NULL && f_write == NULL) {fclose(f_read);}
+    if (f_read == NULL || f_write == NULL) {
         fprintf(stderr, "Something's wrong");
         return 1;
     }

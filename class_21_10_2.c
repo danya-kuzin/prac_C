@@ -12,8 +12,9 @@ int main(int argc, char **argv) {
     f_read = fopen(argv[1], "r");
     f_write = fopen(argv[2], "w");
 
-    // проверкка на не сущ файЛ
-    if (f_read == NULL) return 1;
+    if (f_read == NULL && f_write != NULL) {fclose(f_write);}
+    if (f_read != NULL && f_write == NULL) {fclose(f_read);}
+    if (f_read == NULL || f_write == NULL) return 1;
 
     // читаем почарово
     int count_str = 0;
@@ -52,4 +53,5 @@ int main(int argc, char **argv) {
     f_read = NULL;
     f_write = NULL;
     return 0;
+
 }

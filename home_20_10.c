@@ -35,7 +35,10 @@ char* my_strstr(const char* str, const char* sub) {
     if (len_sub == 0) return (char*)str;
 
     // создаем буффер-строку
-    char buf [len_sub + 1];
+    char* buf = NULL;
+    buf = (char*)malloc((len_sub + 1) * sizeof(char));
+    if (!buf) return NULL;
+
     buf[len_sub] = '\0';
 
     ssize_t p = 0;
@@ -141,7 +144,6 @@ int main(int argc, char** argv) {
             }
 
             // выделяем память под следующую строку
-            size_str = 100;
             i = 0;
             mas_of_str[count_str] = (char*)malloc(size_str * sizeof(char));
             if (!mas_of_str[count_str]) {

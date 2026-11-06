@@ -8,10 +8,33 @@ struct tnode{
     struct tnode *right;
 };
 
+
+// функция рекурсивного освобождения памяти дерева
+void free_tree(struct tnode *p) {
+    // если дошли до листочка, то освобождать ничего не нужно
+    if (p == NULL) return;
+
+    // если левое поддерево не пустое
+    free_tree(p->left);
+
+    // если правое поддерево не пустое
+    free_tree(p->right);
+
+    free(p);
+
+}
+
+
 // функция для построения бинарного дерева
 struct tnode *add_node(struct tnode *p, int k){ 
     if (p == NULL){  
-        p = (struct tnode*)malloc(sizeof(struct tnode)); 
+        p = (struct tnode*)malloc(sizeof(struct tnode));
+        
+        if (!p) {
+            printf("Cant allocate memory\n");
+            return NULL;
+        }
+        
         p->k = k;  
         p->left = NULL;  
         p->right = NULL; 
@@ -59,20 +82,7 @@ void find_min_keys(struct tnode *p, int *min_1, int *min_2) {
     find_min_keys(p->left, min_1, min_2);
 }
 
-// функция рекурсивного освобождения памяти дерева
-void free_tree(struct tnode *p) {
-    // если дошли до листочка, то освобождать ничего не нужно
-    if (p == NULL) return;
 
-    // если левое поддерево не пустое
-    free_tree(p->left);
-
-    // если правое поддерево не пустое
-    free_tree(p->right);
-
-    free(p);
-
-}
 int main(void) {
     // считываем почисленно и строим дерево
     int num;
@@ -80,7 +90,8 @@ int main(void) {
     struct tnode *p = NULL;
     while (scanf("%d", &num) == 1) {
         p = add_node(p, num);
-
+        if (p == NULL) { free_tree(p); return 1; }
+        
         // смотрим, что ввели после числа
         ch = getchar(); 
         if (ch == '\n' || ch == EOF)
